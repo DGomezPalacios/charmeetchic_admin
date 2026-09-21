@@ -1,6 +1,9 @@
 import { Routes } from '@angular/router';
 
-/** Rutas privadas del panel. El acceso lo protegen `authGuard` y `adminGuard` en la ruta padre. */
+/**
+ * Rutas del panel, bajo `/admin`. El acceso lo protegen `authGuard` y `adminGuard` en la ruta padre.
+ * El inventario vive en `/user/inventory` (app.routes.ts) porque también lo ve un usuario sin rol ADMIN.
+ */
 export const ADMIN_ROUTES: Routes = [
   {
     path: 'dashboard',
@@ -8,14 +11,6 @@ export const ADMIN_ROUTES: Routes = [
     loadComponent: () =>
       import('./components/admin-dashboard/admin-dashboard.component').then(
         (m) => m.AdminDashboardComponent,
-      ),
-  },
-  {
-    path: 'inventory',
-    title: 'Inventario',
-    loadComponent: () =>
-      import('./components/inventory-management/inventory-management.component').then(
-        (m) => m.InventoryManagementComponent,
       ),
   },
   {
