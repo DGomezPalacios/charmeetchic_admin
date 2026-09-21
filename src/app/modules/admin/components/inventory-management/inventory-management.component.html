@@ -4,13 +4,25 @@
       <h1>Inventario</h1>
       <p>{{ total() }} {{ total() === 1 ? 'producto' : 'productos' }} en total.</p>
     </div>
-    <div class="page-actions">
-      <button mat-flat-button type="button" (click)="openCreate()">
-        <mat-icon>add</mat-icon>
-        Agregar producto
-      </button>
-    </div>
+    @if (!isReadOnly()) {
+      <div class="page-actions">
+        <button mat-flat-button type="button" (click)="openCreate()">
+          <mat-icon>add</mat-icon>
+          Agregar producto
+        </button>
+      </div>
+    }
   </header>
+
+  @if (isReadOnly()) {
+    <div class="read-only-notice" role="status">
+      <mat-icon aria-hidden="true">info</mat-icon>
+      <p>
+        Tienes acceso de <strong>solo lectura</strong>. Para modificar el inventario, necesitas
+        permisos de administrador.
+      </p>
+    </div>
+  }
 
   <form class="card toolbar" [formGroup]="filters" role="search" (submit)="$event.preventDefault()">
     <mat-form-field class="toolbar-grow" subscriptSizing="dynamic">
@@ -128,24 +140,26 @@
             >
               <mat-icon>visibility</mat-icon>
             </button>
-            <button
-              mat-icon-button
-              type="button"
-              matTooltip="Editar"
-              [attr.aria-label]="'Editar ' + product.name"
-              (click)="openEdit(product)"
-            >
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button
-              mat-icon-button
-              type="button"
-              matTooltip="Eliminar"
-              [attr.aria-label]="'Eliminar ' + product.name"
-              (click)="confirmDelete(product)"
-            >
-              <mat-icon>delete</mat-icon>
-            </button>
+            @if (!isReadOnly()) {
+              <button
+                mat-icon-button
+                type="button"
+                matTooltip="Editar"
+                [attr.aria-label]="'Editar ' + product.name"
+                (click)="openEdit(product)"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                type="button"
+                matTooltip="Eliminar"
+                [attr.aria-label]="'Eliminar ' + product.name"
+                (click)="confirmDelete(product)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            }
           </td>
         </ng-container>
 

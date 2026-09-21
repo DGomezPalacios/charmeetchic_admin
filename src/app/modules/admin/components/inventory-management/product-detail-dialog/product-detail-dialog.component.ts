@@ -1,11 +1,12 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { Product, StockLevel } from '../../../../../shared/models/product.model';
 import { ProductImageDirective } from '../../../../../shared/directives/product-image.directive';
 import { PricePipe } from '../../../../../shared/pipes/price.pipe';
+import { AuthService } from '../../../../../shared/services/auth.service';
 import { ProductService } from '../../../../../shared/services/product.service';
 
 /** Detalle de solo lectura. Se cierra con `'edit'` si el usuario pide editar el producto. */
@@ -91,10 +92,12 @@ import { ProductService } from '../../../../../shared/services/product.service';
     </mat-dialog-content>
     <mat-dialog-actions align="end">
       <button mat-button type="button" mat-dialog-close>Cerrar</button>
-      <button mat-flat-button type="button" [mat-dialog-close]="'edit'">
-        <mat-icon>edit</mat-icon>
-        Editar
-      </button>
+      @if (canEdit()) {
+        <button mat-flat-button type="button" [mat-dialog-close]="'edit'">
+          <mat-icon>edit</mat-icon>
+          Editar
+        </button>
+      }
     </mat-dialog-actions>
   `,
   styles: `
@@ -154,7 +157,10 @@ import { ProductService } from '../../../../../shared/services/product.service';
 export class ProductDetailDialogComponent {
   protected readonly product = inject<Product>(MAT_DIALOG_DATA);
   private readonly productLogic = inject(ProductService);
+  private readonly auth = inject(AuthService);
 
+  /** Solo el administrador puede pasar del detalle a la edición. */
+  protected readonly canEdit = computed(() => this.auth.isAdmin());
   protected readonly selected = signal(0);
   protected readonly margin = this.productLogic.margin(this.product.price, this.product.cost);
   protected readonly level: StockLevel = this.productLogic.stockLevel(this.product.stock);

@@ -1,4 +1,13 @@
-import { Component, DestroyRef, effect, inject, input, signal, untracked } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+  untracked,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -28,6 +37,7 @@ import { PricePipe } from '../../../../shared/pipes/price.pipe';
 import { ApiService } from '../../../../shared/services/api.service';
 import { NotificationService } from '../../../../shared/services/notification.service';
 import { PreferencesService } from '../../../../shared/services/preferences.service';
+import { AuthService } from '../../../../shared/services/auth.service';
 import { ProductService } from '../../../../shared/services/product.service';
 import { ProductDetailDialogComponent } from './product-detail-dialog/product-detail-dialog.component';
 import {
@@ -65,6 +75,10 @@ export class InventoryManagementComponent {
   private readonly productLogic = inject(ProductService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly auth = inject(AuthService);
+
+  /** Sin rol ADMIN el inventario solo se consulta: no se crea, edita ni elimina. */
+  protected readonly isReadOnly = computed(() => !this.auth.isAdmin());
 
   /** `?edit=<id>` abre directamente la edición de ese producto (desde Alertas de stock). */
   readonly edit = input<string>();
@@ -220,6 +234,9 @@ export class InventoryManagementComponent {
   }
 
   protected confirmDelete(product: Product): void {
+    if (this.isReadOnly()) {
+      return;
+    }
     this.dialog
       .open(ConfirmDialogComponent, {
         data: {
@@ -255,6 +272,9 @@ export class InventoryManagementComponent {
   private openEditById(id: number): void {
     // Limpia el query param para que recargar la página no vuelva a abrir el diálogo.
     void this.router.navigate([], { queryParams: { edit: null }, replaceUrl: true });
+    if (this.isReadOnly()) {
+      return;
+    }
     this.api.getProductById(id).subscribe({
       next: (product) => this.openForm(product),
       error: () => this.notifications.error('No se encontró el producto solicitado.'),
@@ -262,6 +282,9 @@ export class InventoryManagementComponent {
   }
 
   private openForm(product?: Product): void {
+    if (this.isReadOnly()) {
+      return;
+    }
     const data: ProductFormDialogData = { product, categories: this.categories() };
     this.dialog
       .open(ProductFormDialogComponent, {

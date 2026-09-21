@@ -5,3 +5,17 @@
 .clear {
   align-self: center;
 }
+
+.read-only-notice {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--cce-info-bg);
+  color: var(--cce-info);
+}
+
+.read-only-notice p {
+  margin: 0;
+}
