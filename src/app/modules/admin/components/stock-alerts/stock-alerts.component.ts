@@ -92,6 +92,6 @@ export class StockAlertsComponent {
 
   /** Lleva a Inventario con el formulario de edición de ese producto abierto. */
   protected increaseStock(product: Product): void {
-    void this.router.navigate(['/inventory'], { queryParams: { edit: product.id } });
+    void this.router.navigate(['/user/inventory'], { queryParams: { edit: product.id } });
   }
 }

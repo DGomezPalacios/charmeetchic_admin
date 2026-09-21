@@ -177,8 +177,19 @@ src/app/
     └── models/              Product, Category, Order, ReportData…
 ```
 
-Rutas: `/login` (público) y `/dashboard`, `/inventory`, `/categories`, `/stock-alerts`, `/orders`, `/reports`,
-`/settings` (solo admin).
+Rutas:
+
+| Ruta | Acceso |
+|---|---|
+| `/login` | Público. Si ya hay sesión redirige según el rol. |
+| `/admin/dashboard`, `/admin/categories`, `/admin/stock-alerts`, `/admin/orders`, `/admin/reports`, `/admin/settings` | Solo `ADMIN` (`authGuard` + `adminGuard`). Un usuario sin el rol vuelve a `/user/inventory`. |
+| `/user/inventory` | Cualquier usuario con sesión. Sin rol `ADMIN` es de **solo lectura** (sin crear, editar ni eliminar) y el menú lateral solo muestra "Inventario". |
+
+Tras iniciar sesión, el `ADMIN` va a `/admin/dashboard` y el resto a `/user/inventory`. Estas restricciones de la
+interfaz no reemplazan al backend, que valida el rol del token en cada petición.
+
+En desarrollo (`!production`) el login tiene un interruptor "Modo Demo" que fuerza el rol de la sesión (Admin /
+Usuario) solo en la interfaz, y se conserva al recargar la pestaña.
 
 ### Agregar un módulo nuevo (p. ej. tienda pública)
 

@@ -64,7 +64,7 @@
       <section class="card" aria-labelledby="alerts-title">
         <div class="card-head">
           <h2 id="alerts-title">Alertas de stock</h2>
-          <a mat-button routerLink="/stock-alerts">Ver todas</a>
+          <a mat-button routerLink="/admin/stock-alerts">Ver todas</a>
         </div>
         @if (lowStock().length === 0) {
           <p class="muted">Todo en orden: no hay productos con stock bajo.</p>
@@ -99,7 +99,7 @@
       <section class="card" aria-labelledby="orders-title">
         <div class="card-head">
           <h2 id="orders-title">Órdenes recientes</h2>
-          <a mat-button routerLink="/orders">Ver todas</a>
+          <a mat-button routerLink="/admin/orders">Ver todas</a>
         </div>
         @if (recentOrders().length === 0) {
           <p class="muted">Aún no hay órdenes registradas.</p>

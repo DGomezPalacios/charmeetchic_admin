@@ -53,15 +53,11 @@ export class LoginComponent {
     try {
       await this.auth.login();
 
-      // 🎯 DEMO: Inyecta rol ADMIN según el toggle (solo desarrollo)
-      if (this.demoAdminMode() && !environment.production) {
-        const user = this.auth.getUser();
-        if (user) {
-          user.roles = [environment.adminRole];
-        }
-      }
-
       if (this.auth.isAuthenticated()) {
+        // 🎯 DEMO: el toggle fija el rol de la sesión (solo desarrollo; ver AuthService.applyDemoRole)
+        if (!environment.production) {
+          this.auth.applyDemoRole(this.demoAdminMode());
+        }
         await this.router.navigateByUrl(this.safeReturnUrl());
       }
     } finally {
@@ -77,6 +73,6 @@ export class LoginComponent {
     const url = this.returnUrl();
     return url && url.startsWith('/') && !url.startsWith('//') && !url.startsWith('/login')
       ? url
-      : '/dashboard';
+      : this.auth.homeUrl();
   }
 }
