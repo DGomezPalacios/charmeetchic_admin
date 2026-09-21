@@ -83,6 +83,47 @@ describe('AuthService (sesión de desarrollo)', () => {
     expect(auth.getUser()?.roles).toContain(environment.adminRole);
   });
 
+  it('el rol de demo quita o devuelve el acceso de administrador y cambia la pantalla de inicio', async () => {
+    await auth.login();
+    expect(auth.homeUrl()).toBe('/admin/dashboard');
+
+    auth.applyDemoRole(false);
+    expect(auth.isAdmin()).toBe(false);
+    expect(auth.isAuthenticated()).toBe(true);
+    expect(auth.homeUrl()).toBe('/user/inventory');
+
+    auth.applyDemoRole(true);
+    expect(auth.isAdmin()).toBe(true);
+  });
+
+  it('el rol de demo sobrevive a recargar la página y se olvida al salir', async () => {
+    await auth.login();
+    auth.applyDemoRole(false);
+
+    const reloaded = TestBed.runInInjectionContext(() => new AuthService());
+    await reloaded.initialize();
+    expect(reloaded.isAuthenticated()).toBe(true);
+    expect(reloaded.isAdmin()).toBe(false);
+
+    await auth.logout();
+    await auth.login();
+    expect(auth.isAdmin()).toBe(true);
+  });
+
+  it('el rol de demo no hace nada sin sesión ni en producción', async () => {
+    auth.applyDemoRole(true);
+    expect(auth.isAuthenticated()).toBe(false);
+
+    await auth.login();
+    environment.production = true;
+    try {
+      auth.applyDemoRole(false);
+      expect(auth.isAdmin()).toBe(true);
+    } finally {
+      environment.production = false;
+    }
+  });
+
   it('la sesión simulada se restaura al recargar y se borra al salir', async () => {
     await auth.login();
     const reloaded = TestBed.runInInjectionContext(() => new AuthService());

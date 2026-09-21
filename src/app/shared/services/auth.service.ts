@@ -17,6 +17,7 @@ import { AuthUser } from '../models/user.model';
 import { ProfileResponse } from './api-mappers';
 
 const DEV_SESSION_KEY = 'cce.devSession';
+const DEMO_ROLE_KEY = 'cce.demoRole';
 
 const DEV_USER: AuthUser = {
   id: 'dev-admin',
@@ -75,7 +76,7 @@ export class AuthService {
   async initialize(): Promise<void> {
     if (this.devBypass) {
       if (this.readDevSession()) {
-        this.currentUser.set(DEV_USER);
+        this.currentUser.set(this.withDemoRole(DEV_USER));
       }
       return;
     }
@@ -143,6 +144,7 @@ export class AuthService {
 
   async logout(): Promise<void> {
     this.currentUser.set(null);
+    this.clearDemoRole();
     if (this.devBypass) {
       this.writeDevSession(false);
     } else {
@@ -161,6 +163,48 @@ export class AuthService {
 
   getUser(): AuthUser | null {
     return this.currentUser();
+  }
+
+  /** Pantalla de inicio según el rol: el administrador va al dashboard; el resto, al inventario (solo lectura). */
+  homeUrl(): string {
+    return this.isAdmin() ? '/admin/dashboard' : '/user/inventory';
+  }
+
+  /**
+   * Solo para la demo del login: fuerza el rol en la sesión ya iniciada. Reemplaza el usuario (no lo muta)
+   * para que `isAdmin()` y los `computed()` que lo leen se enteren. Ignorado en producción.
+   *
+   * Es solo de interfaz: el backend sigue validando el rol real del token en cada petición.
+   */
+  applyDemoRole(admin: boolean): void {
+    if (environment.production || !this.currentUser()) {
+      return;
+    }
+    try {
+      sessionStorage.setItem(DEMO_ROLE_KEY, admin ? 'admin' : 'user');
+    } catch {
+      // Sin sessionStorage el rol elegido dura hasta recargar la página.
+    }
+    this.currentUser.update((user) => user && this.withDemoRole(user));
+  }
+
+  /** Aplica el rol de demo guardado (si lo hay) para que sobreviva a recargar la página. */
+  private withDemoRole(user: AuthUser): AuthUser {
+    let role: string | null = null;
+    try {
+      role = environment.production ? null : sessionStorage.getItem(DEMO_ROLE_KEY);
+    } catch {
+      // Sin sessionStorage no hay rol guardado.
+    }
+    return role ? { ...user, roles: role === 'admin' ? [environment.adminRole] : [] } : user;
+  }
+
+  private clearDemoRole(): void {
+    try {
+      sessionStorage.removeItem(DEMO_ROLE_KEY);
+    } catch {
+      // Nada que limpiar.
+    }
   }
 
   /**
@@ -190,6 +234,7 @@ export class AuthService {
     }
     this.redirectingToLogin = true;
     this.currentUser.set(null);
+    this.clearDemoRole();
     void this.inContext(() => signOut(this.auth))
       .catch(() => undefined)
       .then(() => this.router.navigate(['/login'], { queryParams: { reason: 'expired' } }))
@@ -221,6 +266,7 @@ export class AuthService {
   private async applyUser(user: User | null): Promise<void> {
     if (!user) {
       this.currentUser.set(null);
+      this.clearDemoRole();
       return;
     }
     const base: AuthUser = {
@@ -236,17 +282,19 @@ export class AuthService {
           context: new HttpContext().set(SKIP_UNAUTHORIZED_HANDLING, true),
         }),
       );
-      this.currentUser.set({
-        ...base,
-        name: profile.name || base.name,
-        email: profile.email || base.email,
-        roles: profile.roles,
-      });
+      this.currentUser.set(
+        this.withDemoRole({
+          ...base,
+          name: profile.name || base.name,
+          email: profile.email || base.email,
+          roles: profile.roles,
+        }),
+      );
     } catch (error) {
       console.error('[Auth] No se pudo obtener el perfil desde el backend', error);
       this.error.set(describeProfileError(error));
       // Autenticado en Firebase, pero sin rol confirmado: no podrá entrar al panel.
-      this.currentUser.set(base);
+      this.currentUser.set(this.withDemoRole(base));
     }
   }
 
