@@ -1,0 +1,41 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+}
+
+.shell {
+  flex: 1;
+  min-height: 0;
+  background: var(--mat-sys-surface);
+}
+
+.sidenav {
+  width: var(--cce-sidebar-width);
+  border-right: 1px solid var(--mat-sys-outline-variant);
+  background: var(--mat-sys-surface-container-low);
+}
+
+.demo-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--cce-warning-bg);
+  color: var(--cce-warning);
+  font-size: 13px;
+}
+
+.demo-banner.dev {
+  background: var(--cce-info-bg);
+  color: var(--cce-info);
+}
+
+.demo-banner span {
+  flex: 1 1 280px;
+}
+
+.demo-banner code {
+  font-size: 12px;
+}

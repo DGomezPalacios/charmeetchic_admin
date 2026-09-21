@@ -1,0 +1,100 @@
+/* Paleta de marca Charme et Chic: dorado, plata y negro. */
+:root {
+  color-scheme: light;
+
+  --cce-header-height: 64px;
+  --cce-sidebar-width: 256px;
+  --cce-radius: 12px;
+  --cce-font-brand: 'Playfair Display', Georgia, serif;
+
+  /* Marca */
+  --cce-gold: #a67c00;
+  --cce-gold-soft: #f7ecc6;
+  --cce-silver: #8b9098;
+  --cce-ink: #16150f;
+
+  /* Estados (siempre acompañados de icono o texto, nunca solo color) */
+  --cce-success: #2e7d32;
+  --cce-success-bg: #e3f2e4;
+  --cce-warning: #8a5a00;
+  --cce-warning-bg: #fdeec9;
+  --cce-danger: #b3261e;
+  --cce-danger-bg: #fbe3e0;
+  --cce-info: #1f5f99;
+  --cce-info-bg: #e0edf8;
+
+  /* Gráficos: marca de una sola serie validada contra la superficie */
+  --cce-chart-mark: #a67c00;
+  --cce-chart-grid: #e6e2d8;
+
+  --cce-shadow: 0 1px 2px rgb(22 21 15 / 6%), 0 4px 16px rgb(22 21 15 / 6%);
+
+  --mat-table-row-item-outline-color: var(--mat-sys-outline-variant);
+
+  /* Roles de color Material */
+  --mat-sys-primary: #7f6000;
+  --mat-sys-on-primary: #ffffff;
+  --mat-sys-primary-container: #f7e3a1;
+  --mat-sys-on-primary-container: #3a2b00;
+  --mat-sys-secondary: #5b6067;
+  --mat-sys-on-secondary: #ffffff;
+  --mat-sys-secondary-container: #e3e5e9;
+  --mat-sys-on-secondary-container: #1d2024;
+  --mat-sys-surface: #fcfbf8;
+  --mat-sys-background: #fcfbf8;
+  --mat-sys-surface-container-lowest: #ffffff;
+  --mat-sys-surface-container-low: #f8f6f0;
+  --mat-sys-surface-container: #f3f1ea;
+  --mat-sys-surface-container-high: #edeae1;
+  --mat-sys-surface-container-highest: #e7e4da;
+  --mat-sys-on-surface: #1b1a15;
+  --mat-sys-on-background: #1b1a15;
+  --mat-sys-on-surface-variant: #4d4a41;
+  --mat-sys-outline: #7d7a6f;
+  --mat-sys-outline-variant: #d9d5c8;
+  --mat-sys-error: var(--cce-danger);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --cce-gold: #e6c15a;
+  --cce-gold-soft: #3b3113;
+  --cce-silver: #b6bac1;
+  --cce-ink: #f1ede2;
+
+  --cce-success: #7fd083;
+  --cce-success-bg: #1c3a1e;
+  --cce-warning: #f2c15a;
+  --cce-warning-bg: #3d2f0b;
+  --cce-danger: #ffb4ab;
+  --cce-danger-bg: #4a1c18;
+  --cce-info: #9fc9ee;
+  --cce-info-bg: #16324a;
+
+  --cce-chart-mark: #b98b08;
+  --cce-chart-grid: #34332d;
+
+  --cce-shadow: 0 1px 2px rgb(0 0 0 / 40%), 0 4px 16px rgb(0 0 0 / 30%);
+
+  --mat-sys-primary: #e6c15a;
+  --mat-sys-on-primary: #3a2b00;
+  --mat-sys-primary-container: #574100;
+  --mat-sys-on-primary-container: #f7e3a1;
+  --mat-sys-secondary: #c3c7ce;
+  --mat-sys-on-secondary: #2b2e33;
+  --mat-sys-secondary-container: #42464c;
+  --mat-sys-on-secondary-container: #e3e5e9;
+  --mat-sys-surface: #141412;
+  --mat-sys-background: #141412;
+  --mat-sys-surface-container-lowest: #0e0e0c;
+  --mat-sys-surface-container-low: #1a1a17;
+  --mat-sys-surface-container: #1f1f1b;
+  --mat-sys-surface-container-high: #292924;
+  --mat-sys-surface-container-highest: #34342e;
+  --mat-sys-on-surface: #eae6da;
+  --mat-sys-on-background: #eae6da;
+  --mat-sys-on-surface-variant: #cbc6b8;
+  --mat-sys-outline: #958f81;
+  --mat-sys-outline-variant: #48463e;
+}

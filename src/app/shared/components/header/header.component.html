@@ -1,0 +1,51 @@
+<mat-toolbar class="header">
+  @if (auth.isAdmin()) {
+    <button
+      mat-icon-button
+      type="button"
+      aria-label="Abrir o cerrar el menú"
+      (click)="menuToggle.emit()"
+    >
+      <mat-icon>menu</mat-icon>
+    </button>
+  }
+
+  <a class="brand" routerLink="/" [attr.aria-label]="app.name">
+    <img [src]="app.logo" alt="" width="36" height="36" />
+    <span class="brand-text">
+      <span class="brand-main">Charme et Chic</span>
+      <span class="brand-sub">Panel administrativo</span>
+    </span>
+  </a>
+
+  <span class="spacer"></span>
+
+  <button
+    mat-icon-button
+    type="button"
+    [attr.aria-label]="
+      preferences.theme() === 'dark' ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'
+    "
+    (click)="toggleTheme()"
+  >
+    <mat-icon>{{ preferences.theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+  </button>
+
+  @if (auth.user(); as user) {
+    <div class="user" [attr.title]="user.email">
+      @if (user.photoUrl) {
+        <img class="avatar" [src]="user.photoUrl" alt="" referrerpolicy="no-referrer" />
+      } @else {
+        <span class="avatar" aria-hidden="true">{{ initials() }}</span>
+      }
+      <span class="user-text">
+        <strong>{{ user.name }}</strong>
+        <small>{{ user.email }}</small>
+      </span>
+    </div>
+    <button mat-button type="button" class="logout" aria-label="Cerrar sesión" (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span class="logout-label">Cerrar sesión</span>
+    </button>
+  }
+</mat-toolbar>

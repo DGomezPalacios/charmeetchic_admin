@@ -1,0 +1,136 @@
+:host {
+  display: block;
+  position: relative;
+  z-index: 3;
+}
+
+.header {
+  font-family: 'Inter Variable', Inter, system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  height: var(--cce-header-height);
+  gap: 4px;
+  padding: 0 8px;
+  background: #16150f;
+  color: #f1ede2;
+  border-bottom: 2px solid #c9a227;
+  --mat-icon-button-icon-color: #f1ede2;
+  --mat-button-text-label-text-color: #f1ede2;
+  --mat-button-text-with-icon-label-text-color: #f1ede2;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: inherit;
+  text-decoration: none;
+  min-width: 0;
+}
+
+.brand img {
+  border-radius: 50%;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.brand-main {
+  font-family: var(--cce-font-brand);
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: #e6c15a;
+  white-space: nowrap;
+}
+
+.brand-sub {
+  display: none;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #b6bac1;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 4px;
+}
+
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #c9a227;
+  color: #16150f;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+img.avatar {
+  object-fit: cover;
+}
+
+.user-text {
+  display: none;
+  flex-direction: column;
+  line-height: 1.2;
+  max-width: 220px;
+}
+
+.user-text strong {
+  font-weight: 500;
+}
+
+.user-text strong,
+.user-text small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-text small {
+  font-size: 12px;
+  color: #b6bac1;
+}
+
+/* Más específico que `.mat-mdc-button.mat-unthemed`, que fija el color por defecto del botón. */
+.header .logout {
+  --mat-button-text-label-text-color: #f1ede2;
+  --mat-button-text-with-icon-label-text-color: #f1ede2;
+  color: #f1ede2;
+}
+
+.logout-label {
+  display: none;
+}
+
+@media (min-width: 600px) {
+  .brand-sub {
+    display: block;
+  }
+  .user-text {
+    display: flex;
+  }
+}
+
+@media (min-width: 960px) {
+  .header {
+    padding: 0 16px;
+  }
+  .logout-label {
+    display: inline;
+  }
+}

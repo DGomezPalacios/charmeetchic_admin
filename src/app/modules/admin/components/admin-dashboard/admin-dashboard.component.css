@@ -1,0 +1,55 @@
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.card-head h2 {
+  margin: 0;
+}
+
+.week-total {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.two-cols {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 960px) {
+  .two-cols {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
+
+.list li:first-child {
+  border-top: 0;
+}
+
+.grow {
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  font-weight: 500;
+}

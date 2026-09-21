@@ -1,0 +1,157 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Editar producto' : 'Nuevo producto' }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="save()" novalidate>
+  <mat-dialog-content>
+    <div class="form-grid">
+      <mat-form-field class="span-2">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="name" maxlength="150" autocomplete="off" />
+        @if (form.controls.name.invalid && form.controls.name.touched) {
+          <mat-error>{{ errorMessage(form.controls.name) }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field class="span-2">
+        <mat-label>Descripción</mat-label>
+        <textarea matInput formControlName="description" rows="3" maxlength="1000"></textarea>
+        <mat-hint align="end">{{ form.controls.description.value.length }}/1000</mat-hint>
+        @if (form.controls.description.invalid) {
+          <mat-error>{{ errorMessage(form.controls.description) }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Precio de venta</mat-label>
+        <span matTextPrefix>$&nbsp;</span>
+        <input
+          matInput
+          type="number"
+          inputmode="numeric"
+          formControlName="price"
+          min="1"
+          step="1"
+        />
+        @if (form.controls.price.invalid && form.controls.price.touched) {
+          <mat-error>{{ errorMessage(form.controls.price) }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Costo</mat-label>
+        <span matTextPrefix>$&nbsp;</span>
+        <input matInput type="number" inputmode="numeric" formControlName="cost" min="0" step="1" />
+        @if (margin() !== null) {
+          <mat-hint [class.warn]="margin()! < 0">
+            Margen: {{ margin()! * 100 | number: '1.0-1' }}%{{
+              margin()! < 0 ? ' (precio bajo el costo)' : ''
+            }}
+          </mat-hint>
+        }
+        @if (form.controls.cost.invalid && form.controls.cost.touched) {
+          <mat-error>{{ errorMessage(form.controls.cost) }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Categoría</mat-label>
+        <mat-select formControlName="categoryId">
+          @for (category of data.categories; track category.id) {
+            <mat-option [value]="category.id">{{ category.name }}</mat-option>
+          }
+        </mat-select>
+        @if (form.controls.categoryId.invalid && form.controls.categoryId.touched) {
+          <mat-error>{{ errorMessage(form.controls.categoryId) }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Stock</mat-label>
+        <input
+          matInput
+          type="number"
+          inputmode="numeric"
+          formControlName="stock"
+          min="0"
+          step="1"
+        />
+        @if (form.controls.stock.invalid && form.controls.stock.touched) {
+          <mat-error>
+            {{ errorMessage(form.controls.stock, { pattern: 'Debe ser un número entero.' }) }}
+          </mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>SKU</mat-label>
+        <input matInput formControlName="sku" maxlength="50" autocomplete="off" class="upper" />
+        <mat-hint>2–50 caracteres: letras, números, - o _</mat-hint>
+        @if (form.controls.sku.invalid && form.controls.sku.touched) {
+          <mat-error>
+            {{
+              errorMessage(form.controls.sku, { pattern: 'Usa 2 a 50 letras, números, "-" o "_".' })
+            }}
+          </mat-error>
+        }
+      </mat-form-field>
+
+      <div class="toggle">
+        <mat-slide-toggle formControlName="active"
+          >Producto activo (visible en tienda)</mat-slide-toggle
+        >
+      </div>
+    </div>
+
+    <fieldset class="images">
+      <legend>Imágenes ({{ images.length }}/{{ maxImages }})</legend>
+      @for (control of images.controls; track $index) {
+        <div class="image-row">
+          @if (control.valid && control.value) {
+            <img class="thumb" [appProductImage]="control.value" alt="" />
+          } @else {
+            <span class="thumb placeholder"><mat-icon aria-hidden="true">image</mat-icon></span>
+          }
+          <mat-form-field subscriptSizing="dynamic" class="grow">
+            <mat-label>URL de la imagen {{ $index + 1 }}</mat-label>
+            <input
+              matInput
+              [formControl]="control"
+              placeholder="https://… o /images/…"
+              autocomplete="off"
+            />
+            @if (control.invalid && control.touched) {
+              <mat-error>{{
+                errorMessage(control, {
+                  pattern: 'Ingresa una URL http(s) o una ruta que empiece con /.',
+                })
+              }}</mat-error>
+            }
+          </mat-form-field>
+          <button
+            mat-icon-button
+            type="button"
+            [attr.aria-label]="'Quitar imagen ' + ($index + 1)"
+            (click)="removeImage($index)"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      }
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="addImage()"
+        [disabled]="images.length >= maxImages"
+      >
+        <mat-icon>add_photo_alternate</mat-icon>
+        Agregar imagen
+      </button>
+    </fieldset>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()" [disabled]="saving()">Cancelar</button>
+    <button mat-flat-button type="submit" [disabled]="saving()">
+      {{ saving() ? 'Guardando…' : isEdit ? 'Guardar cambios' : 'Crear producto' }}
+    </button>
+  </mat-dialog-actions>
+</form>

@@ -1,0 +1,101 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <h1>Configuración</h1>
+      <p>Tu perfil y las preferencias de este panel.</p>
+    </div>
+  </header>
+
+  <div class="grid">
+    <section class="card" aria-labelledby="profile-title">
+      <h2 id="profile-title">Mi perfil</h2>
+      @if (auth.user(); as user) {
+        <dl>
+          <div>
+            <dt>Nombre</dt>
+            <dd>{{ user.name }}</dd>
+          </div>
+          <div>
+            <dt>Correo</dt>
+            <dd>{{ user.email }}</dd>
+          </div>
+          <div>
+            <dt>Roles</dt>
+            <dd>
+              @for (role of user.roles; track role) {
+                <span class="chip chip-neutral">{{ role }}</span>
+              } @empty {
+                —
+              }
+            </dd>
+          </div>
+          <div>
+            <dt>ID de usuario (Firebase UID)</dt>
+            <dd class="mono">{{ user.id }}</dd>
+          </div>
+        </dl>
+        <p class="muted small">
+          Estos datos provienen de tu cuenta de Google y del servidor, y no se editan aquí.
+        </p>
+      }
+    </section>
+
+    <section class="card" aria-labelledby="password-title">
+      <h2 id="password-title">Cambiar contraseña</h2>
+      @if (auth.isDevSession()) {
+        <p class="muted">
+          Estás en una sesión de desarrollo sin Firebase, por lo que no hay contraseña que cambiar.
+        </p>
+      } @else {
+        <p class="muted">
+          Ingresas con tu cuenta de Google: la contraseña y la seguridad de la cuenta se gestionan
+          en Google, no en este panel.
+        </p>
+        <a mat-stroked-button [href]="passwordUrl" target="_blank" rel="noopener noreferrer">
+          <mat-icon>open_in_new</mat-icon>
+          Ir a la seguridad de mi cuenta de Google
+        </a>
+      }
+    </section>
+
+    <section class="card" aria-labelledby="prefs-title">
+      <h2 id="prefs-title">Preferencias</h2>
+
+      <div class="pref">
+        <span id="theme-label" class="pref-label">Tema</span>
+        <mat-button-toggle-group
+          aria-labelledby="theme-label"
+          [value]="preferences.theme()"
+          (change)="setTheme($event.value)"
+        >
+          <mat-button-toggle value="light"><mat-icon>light_mode</mat-icon> Claro</mat-button-toggle>
+          <mat-button-toggle value="dark"><mat-icon>dark_mode</mat-icon> Oscuro</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+
+      <div class="pref">
+        <mat-form-field subscriptSizing="dynamic">
+          <mat-label>Filas por página en las tablas</mat-label>
+          <mat-select
+            [value]="preferences.pageSize()"
+            (selectionChange)="setPageSize($event.value)"
+          >
+            @for (size of pageSizeOptions; track size) {
+              <mat-option [value]="size">{{ size }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="pref">
+        <mat-form-field subscriptSizing="dynamic">
+          <mat-label>Idioma</mat-label>
+          <mat-select value="es" disabled>
+            <mat-option value="es">Español</mat-option>
+          </mat-select>
+          <mat-hint>Otros idiomas estarán disponibles próximamente.</mat-hint>
+        </mat-form-field>
+      </div>
+    </section>
+  </div>
+</div>

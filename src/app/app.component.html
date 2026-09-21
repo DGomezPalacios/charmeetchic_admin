@@ -1,0 +1,46 @@
+<app-header (menuToggle)="toggleSidebar()" />
+
+<mat-sidenav-container class="shell">
+  @if (auth.isAdmin()) {
+    <mat-sidenav
+      class="sidenav"
+      [mode]="isMobile() ? 'over' : 'side'"
+      [opened]="sidebarOpen()"
+      (closedStart)="sidebarOpen.set(false)"
+    >
+      <app-sidebar (navigate)="onNavigate()" />
+    </mat-sidenav>
+  }
+
+  <mat-sidenav-content>
+    @if (api.demoMode(); as reason) {
+      <div class="demo-banner" role="status">
+        <mat-icon aria-hidden="true">science</mat-icon>
+        <span>
+          <strong>Modo demostración.</strong>
+          @if (reason === 'unreachable') {
+            No se pudo conectar con <code>{{ apiUrl }}</code
+            >.
+          } @else {
+            Sesión de desarrollo (<code>devAuthBypass</code>): sin token de Firebase no se usa el
+            backend en <code>{{ apiUrl }}</code
+            >.
+          }
+          Se muestran datos de ejemplo que se reinician al recargar; no se modifica el backend real.
+        </span>
+        @if (reason === 'unreachable') {
+          <button mat-button type="button" (click)="retryConnection()">Reintentar conexión</button>
+        }
+      </div>
+    } @else if (auth.isDevSession() && auth.isAuthenticated()) {
+      <div class="demo-banner dev" role="status">
+        <mat-icon aria-hidden="true">construction</mat-icon>
+        <span>
+          <strong>Sesión de desarrollo.</strong> Autenticación simulada
+          (<code>devAuthBypass</code>), sin Firebase.
+        </span>
+      </div>
+    }
+    <router-outlet />
+  </mat-sidenav-content>
+</mat-sidenav-container>

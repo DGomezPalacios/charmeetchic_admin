@@ -1,0 +1,23 @@
+@use '@angular/material' as mat;
+
+// Línea base del tema Material 3 (tipografía, densidad, roles de color).
+// Los colores de marca (dorado, plata, negro) se afinan en variables.css.
+html {
+  @include mat.theme(
+    (
+      color: (
+        theme-type: color-scheme,
+        primary: mat.$yellow-palette,
+        tertiary: mat.$orange-palette,
+      ),
+      typography: (
+        plain-family: 'Inter Variable, Inter, system-ui, sans-serif',
+        brand-family: 'Playfair Display, Georgia, serif',
+        bold-weight: 600,
+        medium-weight: 500,
+        regular-weight: 400,
+      ),
+      density: -1,
+    )
+  );
+}

@@ -1,0 +1,124 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p>Resumen del inventario y las ventas de la tienda.</p>
+    </div>
+    <div class="page-actions">
+      <button mat-stroked-button type="button" (click)="load()" [disabled]="loading()">
+        <mat-icon>refresh</mat-icon>
+        Actualizar
+      </button>
+    </div>
+  </header>
+
+  @if (failed()) {
+    <div class="card empty-state">
+      <mat-icon>cloud_off</mat-icon>
+      <p>No se pudo cargar el resumen.</p>
+      <button mat-flat-button type="button" (click)="load()">Reintentar</button>
+    </div>
+  } @else if (loading() && !data()) {
+    <app-loading-spinner label="Cargando resumen…" />
+  } @else if (inventory(); as inv) {
+    <section class="kpi-grid" aria-label="Indicadores principales">
+      <div class="kpi">
+        <span class="label">Productos activos</span>
+        <span class="value">{{ inv.activeProducts }}</span>
+        <span class="hint">{{ inv.totalUnits }} unidades en stock</span>
+      </div>
+      <div class="kpi">
+        <span class="label">Valor del inventario (a costo)</span>
+        <span class="value">{{ inv.costValue | price }}</span>
+        <span class="hint">A precio de venta: {{ inv.retailValue | price }}</span>
+      </div>
+      <div class="kpi" [class.alert]="lowStock().length > 0">
+        <span class="label">Productos con stock bajo</span>
+        <span class="value">{{ lowStock().length }}</span>
+        <span class="hint">Menos de {{ lowStockThreshold }} unidades</span>
+      </div>
+      <div class="kpi">
+        <span class="label">Órdenes (últimos 7 días)</span>
+        <span class="value">{{ weekOrders() }}</span>
+        <span class="hint">{{ weekTotal() | price }} en ventas</span>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="sales-title">
+      <div class="card-head">
+        <h2 id="sales-title">Ventas de los últimos 7 días</h2>
+        <span class="week-total">{{ weekTotal() | price }}</span>
+      </div>
+      <app-chart
+        type="line"
+        [labels]="chartLabels()"
+        [values]="chartValues()"
+        [format]="formatMoney"
+        seriesLabel="Ventas"
+        ariaLabel="Ventas por día durante los últimos 7 días"
+        [height]="240"
+      />
+    </section>
+
+    <div class="two-cols">
+      <section class="card" aria-labelledby="alerts-title">
+        <div class="card-head">
+          <h2 id="alerts-title">Alertas de stock</h2>
+          <a mat-button routerLink="/stock-alerts">Ver todas</a>
+        </div>
+        @if (lowStock().length === 0) {
+          <p class="muted">Todo en orden: no hay productos con stock bajo.</p>
+        } @else {
+          <ul class="list">
+            @for (product of lowStock().slice(0, 5); track product.id) {
+              <li>
+                <div class="grow">
+                  <div class="name">{{ product.name }}</div>
+                  <div class="muted">{{ product.sku }} · {{ product.category.name }}</div>
+                </div>
+                <span
+                  class="chip"
+                  [class.chip-out]="product.stock === 0"
+                  [class.chip-low]="product.stock > 0"
+                >
+                  <mat-icon aria-hidden="true">{{
+                    product.stock === 0 ? 'error' : 'warning'
+                  }}</mat-icon>
+                  {{
+                    product.stock === 0
+                      ? 'Agotado'
+                      : product.stock + (product.stock === 1 ? ' unidad' : ' unidades')
+                  }}
+                </span>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+
+      <section class="card" aria-labelledby="orders-title">
+        <div class="card-head">
+          <h2 id="orders-title">Órdenes recientes</h2>
+          <a mat-button routerLink="/orders">Ver todas</a>
+        </div>
+        @if (recentOrders().length === 0) {
+          <p class="muted">Aún no hay órdenes registradas.</p>
+        } @else {
+          <ul class="list">
+            @for (order of recentOrders(); track order.id) {
+              <li>
+                <div class="grow">
+                  <div class="name">#{{ order.id }} · {{ order.total | price }}</div>
+                  <div class="muted">{{ order.createdAt | date: 'dd/MM/yyyy HH:mm' }}</div>
+                </div>
+                <span class="chip" [class]="'chip chip-' + order.status">{{
+                  statusLabels[order.status]
+                }}</span>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    </div>
+  }
+</div>

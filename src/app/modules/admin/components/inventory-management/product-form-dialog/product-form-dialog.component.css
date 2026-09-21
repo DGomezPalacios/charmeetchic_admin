@@ -1,0 +1,51 @@
+:host {
+  display: block;
+}
+
+.upper {
+  text-transform: uppercase;
+}
+
+.toggle {
+  grid-column: 1 / -1;
+  padding: 8px 0 16px;
+}
+
+.warn {
+  color: var(--cce-danger);
+}
+
+.images {
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 8px;
+}
+
+.images legend {
+  padding: 0 6px;
+  font-weight: 500;
+}
+
+.image-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.image-row .thumb {
+  margin-top: 4px;
+}
+
+.placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.grow {
+  flex: 1;
+  min-width: 0;
+}

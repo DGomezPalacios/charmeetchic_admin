@@ -1,0 +1,132 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <h1>Órdenes</h1>
+      <p>Revisa los pedidos y actualiza su estado de preparación y envío.</p>
+    </div>
+    <div class="page-actions">
+      <button mat-stroked-button type="button" (click)="load()" [disabled]="loading()">
+        <mat-icon>refresh</mat-icon>
+        Actualizar
+      </button>
+    </div>
+  </header>
+
+  <div class="card filters">
+    <mat-button-toggle-group
+      aria-label="Filtrar por estado"
+      [value]="statusFilter()"
+      (change)="filterBy($event.value)"
+    >
+      <mat-button-toggle value="ALL">Todas ({{ counts().ALL }})</mat-button-toggle>
+      @for (status of statuses; track status) {
+        <mat-button-toggle [value]="status">
+          {{ statusLabels[status] }} ({{ counts()[status] }})
+        </mat-button-toggle>
+      }
+    </mat-button-toggle-group>
+  </div>
+
+  <div class="card table-card">
+    @if (loading()) {
+      <app-loading-spinner [overlay]="true" label="Cargando órdenes…" />
+    }
+
+    <div class="table-scroll">
+      <table
+        mat-table
+        [dataSource]="dataSource"
+        matSort
+        matSortActive="createdAt"
+        matSortDirection="desc"
+        matSortDisableClear
+      >
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>N.º</th>
+          <td mat-cell *matCellDef="let order">
+            <strong>#{{ order.id }}</strong>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="createdAt">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
+          <td mat-cell *matCellDef="let order">{{ order.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="userId">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Cliente</th>
+          <td mat-cell *matCellDef="let order">{{ order.userId }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="items">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header arrowPosition="before" class="num">
+            Unidades
+          </th>
+          <td mat-cell *matCellDef="let order" class="num">{{ itemCount(order) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="total">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header arrowPosition="before" class="num">
+            Total
+          </th>
+          <td mat-cell *matCellDef="let order" class="num">{{ order.total | price }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
+          <td mat-cell *matCellDef="let order">
+            <span class="chip" [class]="'chip chip-' + order.status">{{ statusLabel(order) }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef><span class="sr-only">Acciones</span></th>
+          <td mat-cell *matCellDef="let order">
+            <button
+              mat-icon-button
+              type="button"
+              matTooltip="Ver detalle"
+              [attr.aria-label]="'Ver detalle de la orden ' + order.id"
+              (click)="openDetail(order)"
+            >
+              <mat-icon>visibility</mat-icon>
+            </button>
+            @if (nextStatus(order); as next) {
+              <button
+                mat-stroked-button
+                type="button"
+                [disabled]="updatingId() === order.id"
+                (click)="advance(order)"
+              >
+                Pasar a {{ statusLabels[next] }}
+                <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+              </button>
+            } @else {
+              <span class="muted final">Estado final</span>
+            }
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns"></tr>
+      </table>
+    </div>
+
+    @if (failed()) {
+      <div class="empty-state">
+        <mat-icon>cloud_off</mat-icon>
+        <p>No se pudieron cargar las órdenes.</p>
+        <button mat-flat-button type="button" (click)="load()">Reintentar</button>
+      </div>
+    } @else if (!loading() && dataSource.filteredData.length === 0) {
+      <div class="empty-state">
+        <mat-icon>receipt_long</mat-icon>
+        <p>
+          {{ statusFilter() === 'ALL' ? 'Aún no hay órdenes.' : 'No hay órdenes en este estado.' }}
+        </p>
+      </div>
+    }
+
+    <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons />
+  </div>
+</div>
