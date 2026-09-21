@@ -1,11 +1,14 @@
-import { Component, output } from '@angular/core';
+import { Component, computed, inject, output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 interface NavItem {
   path: string;
   label: string;
   icon: string;
+  /** Solo se muestra a usuarios con rol ADMIN. */
+  adminOnly?: boolean;
 }
 
 @Component({
@@ -14,7 +17,7 @@ interface NavItem {
   template: `
     <nav aria-label="Navegación principal">
       <ul>
-        @for (item of items; track item.path) {
+        @for (item of items(); track item.path) {
           <li>
             <a
               [routerLink]="item.path"
@@ -70,13 +73,26 @@ export class SidebarComponent {
   /** Se emite al elegir una opción (para cerrar el menú en móvil). */
   readonly navigate = output<void>();
 
-  protected readonly items: NavItem[] = [
-    { path: '/dashboard', label: 'Dashboard', icon: 'space_dashboard' },
-    { path: '/inventory', label: 'Inventario', icon: 'inventory_2' },
-    { path: '/categories', label: 'Categorías', icon: 'category' },
-    { path: '/stock-alerts', label: 'Alertas de stock', icon: 'notification_important' },
-    { path: '/orders', label: 'Órdenes', icon: 'receipt_long' },
-    { path: '/reports', label: 'Reportes', icon: 'bar_chart' },
-    { path: '/settings', label: 'Configuración', icon: 'settings' },
+  private readonly auth = inject(AuthService);
+  private readonly isAdmin = computed(() => this.auth.isAdmin());
+
+  private readonly allItems: NavItem[] = [
+    { path: '/admin/dashboard', label: 'Dashboard', icon: 'space_dashboard', adminOnly: true },
+    { path: '/user/inventory', label: 'Inventario', icon: 'inventory_2' },
+    { path: '/admin/categories', label: 'Categorías', icon: 'category', adminOnly: true },
+    {
+      path: '/admin/stock-alerts',
+      label: 'Alertas de stock',
+      icon: 'notification_important',
+      adminOnly: true,
+    },
+    { path: '/admin/orders', label: 'Órdenes', icon: 'receipt_long', adminOnly: true },
+    { path: '/admin/reports', label: 'Reportes', icon: 'bar_chart', adminOnly: true },
+    { path: '/admin/settings', label: 'Configuración', icon: 'settings', adminOnly: true },
   ];
+
+  /** Un usuario sin rol ADMIN solo ve "Inventario". */
+  protected readonly items = computed(() =>
+    this.allItems.filter((item) => !item.adminOnly || this.isAdmin()),
+  );
 }

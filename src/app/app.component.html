@@ -1,7 +1,7 @@
 <app-header (menuToggle)="toggleSidebar()" />
 
 <mat-sidenav-container class="shell">
-  @if (auth.isAdmin()) {
+  @if (auth.isAuthenticated()) {
     <mat-sidenav
       class="sidenav"
       [mode]="isMobile() ? 'over' : 'side'"
