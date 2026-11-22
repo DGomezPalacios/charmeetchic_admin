@@ -2,7 +2,7 @@ import { Environment } from './environment.model';
 
 export const environment: Environment = {
   production: true,
-  apiUrl: 'https://api.charmeetchic.example/api',
+  apiUrl: 'https://vigilant-xylophone-g45r4wg64g9v397r9-8000.app.github.dev/api',
   mockFallback: false,
   devAuthBypass: false,
   firebase: {
