@@ -1,0 +1,224 @@
+.page-actions {
+  align-items: center;
+}
+
+/* ── Indicador "en vivo" ─────────────────────────────────── */
+
+.live {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.live-live {
+  background: var(--cce-success-bg);
+  color: var(--cce-success);
+}
+
+.live-live .dot {
+  animation: blink 0.9s ease-out;
+}
+
+.live-error {
+  background: var(--cce-danger-bg);
+  color: var(--cce-danger);
+}
+
+@keyframes blink {
+  0% {
+    transform: scale(1.8);
+    box-shadow: 0 0 0 0 currentColor;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 8px transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-live .dot {
+    animation-duration: 0.01ms;
+  }
+}
+
+/* ── Avisos ──────────────────────────────────────────────── */
+
+.banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: var(--cce-radius);
+}
+
+.banner .mat-icon {
+  flex-shrink: 0;
+}
+
+.banner-info {
+  background: var(--cce-info-bg);
+  color: var(--cce-info);
+}
+
+.banner-error {
+  background: var(--cce-danger-bg);
+  color: var(--cce-danger);
+}
+
+/* ── Top productos ───────────────────────────────────────── */
+
+.bars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bar-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.bar-label .name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bar-track {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--mat-sys-surface-container-high);
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--cce-chart-mark);
+  transition: width 0.4s ease;
+}
+
+/* ── Stock crítico ───────────────────────────────────────── */
+
+.critical-item > .mat-icon {
+  color: var(--cce-warning);
+}
+
+.critical-item.out > .mat-icon {
+  color: var(--cce-danger);
+}
+
+.sku {
+  font-size: 12px;
+}
+
+.ok {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Feed de eventos ─────────────────────────────────────── */
+
+.feed-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.feed li {
+  flex-wrap: wrap;
+  font-size: 14px;
+}
+
+.detail {
+  min-width: 160px;
+}
+
+.kafka {
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--mat-sys-surface-container-high);
+  white-space: nowrap;
+}
+
+.ev-sale {
+  background: var(--cce-success-bg);
+  color: var(--cce-success);
+}
+
+.ev-stock {
+  background: var(--cce-warning-bg);
+  color: var(--cce-warning);
+}
+
+.ev-other {
+  background: var(--cce-info-bg);
+  color: var(--cce-info);
+}
+
+/* ── Distribución y listas (como en el Dashboard) ────────── */
+
+.two-cols {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 960px) {
+  .two-cols {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
+
+.list li:first-child {
+  border-top: 0;
+}
+
+.grow {
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  font-weight: 500;
+}

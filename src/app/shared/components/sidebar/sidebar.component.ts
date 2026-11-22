@@ -88,6 +88,7 @@ export class SidebarComponent {
     },
     { path: '/admin/orders', label: 'Órdenes', icon: 'receipt_long', adminOnly: true },
     { path: '/admin/reports', label: 'Reportes', icon: 'bar_chart', adminOnly: true },
+    { path: '/admin/realtime', label: 'Tiempo real', icon: 'sensors', adminOnly: true },
     { path: '/admin/settings', label: 'Configuración', icon: 'settings', adminOnly: true },
   ];
 

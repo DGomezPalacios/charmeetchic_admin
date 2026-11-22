@@ -6,7 +6,7 @@ import { authGuard } from './shared/guards/auth.guard';
  * Rutas raíz. Cada módulo se carga bajo demanda, así que sumar uno nuevo
  * (p. ej. una tienda pública) es agregar aquí su `loadChildren`.
  *
- * - `/admin/*`: solo ADMIN (dashboard, categorías, alertas, órdenes, reportes, configuración).
+ * - `/admin/*`: solo ADMIN (dashboard, categorías, alertas, órdenes, reportes, tiempo real, configuración).
  * - `/user/*`: cualquier usuario con sesión. El inventario es de solo lectura si no es ADMIN.
  */
 export const routes: Routes = [
