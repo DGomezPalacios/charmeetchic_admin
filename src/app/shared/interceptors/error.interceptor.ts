@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 import { AuthService } from '../services/auth.service';
 import { describeHttpError } from '../services/http-error';
 import { NotificationService } from '../services/notification.service';
+import { SKIP_ERROR_NOTIFICATION } from './http-context';
 
 /** Registra los errores HTTP y muestra un mensaje amigable al usuario. */
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
@@ -27,7 +28,11 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         notifications.error(
           'El backend rechazó la sesión de desarrollo (401). Configura Firebase y desactiva devAuthBypass.',
         );
-      } else if (error.status !== 401 && !fallsBackToDemo) {
+      } else if (
+        error.status !== 401 &&
+        !fallsBackToDemo &&
+        !req.context.get(SKIP_ERROR_NOTIFICATION)
+      ) {
         notifications.error(describeHttpError(error));
       }
       return throwError(() => error);

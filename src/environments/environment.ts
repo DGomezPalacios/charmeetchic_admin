@@ -6,6 +6,8 @@ export const environment: Environment = {
   // devAuthBypass: true da una sesión de administrador simulada sin Firebase (solo desarrollo).
   mockFallback: true,
   devAuthBypass: false,
+  // true: la página "Tiempo real" usa métricas de ejemplo (mientras no exista /streaming en el backend).
+  streamingMock: true,
   // Proyecto Firebase "charme-et-chic" (Firebase Console → Project settings → General).
   // El projectId debe coincidir con `firebase.project-id` del backend.
   firebase: {

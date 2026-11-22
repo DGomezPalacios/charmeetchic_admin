@@ -13,6 +13,11 @@ export interface Environment {
   apiUrl: string;
   /** Si el backend no responde (status 0), usa datos de ejemplo en memoria. */
   mockFallback: boolean;
+  /**
+   * La página "Tiempo real" usa métricas de ejemplo en memoria en vez de `GET /streaming/metrics`.
+   * Ignorado cuando `production` es true.
+   */
+  streamingMock: boolean;
   /** Sesión de administrador simulada, sin Firebase. Ignorada cuando `production` es true. */
   devAuthBypass: boolean;
   firebase: FirebaseConfig;
