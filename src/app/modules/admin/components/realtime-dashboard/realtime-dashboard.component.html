@@ -1,0 +1,166 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <h1>Tiempo real</h1>
+      <p>
+        Métricas calculadas por el backend a partir de los eventos de Kafka. Se actualizan cada
+        {{ pollSeconds }} s.
+      </p>
+    </div>
+    <div class="page-actions">
+      <span class="live live-{{ status() }}" role="status" aria-live="polite">
+        @for (key of [pulse()]; track key) {
+          <span class="dot" aria-hidden="true"></span>
+        }
+        @switch (status()) {
+          @case ('live') {
+            En vivo
+          }
+          @case ('error') {
+            Sin conexión
+          }
+          @default {
+            Conectando…
+          }
+        }
+      </span>
+      <button
+        mat-flat-button
+        type="button"
+        (click)="simulate()"
+        [disabled]="simulating() || status() === 'error'"
+      >
+        <mat-icon>bolt</mat-icon>
+        {{ simulating() ? 'Enviando…' : 'Simular ' + simulatedSales + ' ventas' }}
+      </button>
+    </div>
+  </header>
+
+  @if (demoData) {
+    <p class="banner banner-info">
+      <mat-icon aria-hidden="true">science</mat-icon>
+      <span>
+        Datos de ejemplo generados en el navegador (<code>streamingMock</code>). En producción se
+        consulta el backend real.
+      </span>
+    </p>
+  }
+
+  @if (status() === 'error') {
+    <div class="banner banner-error" role="alert">
+      <mat-icon aria-hidden="true">cloud_off</mat-icon>
+      <div>
+        <strong>El servicio de métricas no responde.</strong>
+        Reintentando cada {{ pollSeconds }} s…
+        @if (lastUpdate(); as last) {
+          <br />Se muestran los últimos datos recibidos, de las {{ last | date: 'HH:mm:ss' }}.
+        }
+      </div>
+    </div>
+  }
+
+  @if (metrics(); as m) {
+    <section class="kpi-grid" aria-label="Indicadores de ventas">
+      <div class="kpi">
+        <span class="label">Ventas último minuto</span>
+        <span class="value">{{ m.ventasUltimoMinuto | number }}</span>
+        <span class="hint">Ventana móvil de 60 s</span>
+      </div>
+      <div class="kpi">
+        <span class="label">Ventas totales</span>
+        <span class="value">{{ m.ventasTotales | number }}</span>
+        <span class="hint">Desde que arrancó el consumidor</span>
+      </div>
+      <div class="kpi">
+        <span class="label">Ingresos totales</span>
+        <span class="value">{{ m.ingresosTotales | price }}</span>
+        <span class="hint">CLP</span>
+      </div>
+    </section>
+
+    <div class="two-cols">
+      <section class="card" aria-labelledby="rt-top">
+        <h2 id="rt-top">Top 5 productos</h2>
+        @if (topProducts().length) {
+          <ol class="bars">
+            @for (p of topProducts(); track p.sku) {
+              <li>
+                <div class="bar-label">
+                  <span class="name">{{ p.nombre }}</span>
+                  <span class="num">{{ p.unidades | number }} u.</span>
+                </div>
+                <div class="bar-track" aria-hidden="true">
+                  <div class="bar-fill" [style.width.%]="barWidth(p.unidades)"></div>
+                </div>
+              </li>
+            }
+          </ol>
+        } @else {
+          <p class="muted">Aún no hay ventas registradas.</p>
+        }
+      </section>
+
+      <section class="card" aria-labelledby="rt-stock">
+        <h2 id="rt-stock">Stock crítico</h2>
+        @if (criticalStock().length) {
+          <ul class="list">
+            @for (p of criticalStock(); track p.sku) {
+              <li class="critical-item" [class.out]="p.stock <= 0">
+                <mat-icon aria-hidden="true">{{
+                  p.stock <= 0 ? 'error' : 'priority_high'
+                }}</mat-icon>
+                <div class="grow">
+                  <div class="name">{{ p.nombre }}</div>
+                  <div class="muted sku">{{ p.sku }}</div>
+                </div>
+                <span class="chip chip-critical">
+                  {{ p.stock <= 0 ? 'Agotado' : p.stock + ' u.' }}
+                </span>
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="muted ok">
+            <mat-icon aria-hidden="true">verified</mat-icon>
+            Ningún producto con stock crítico.
+          </p>
+        }
+      </section>
+    </div>
+
+    <section class="card" aria-labelledby="rt-feed">
+      <div class="feed-head">
+        <h2 id="rt-feed">Últimos eventos</h2>
+        <span class="muted">Generado {{ m.generadoEn | date: 'HH:mm:ss' }}</span>
+      </div>
+      @if (m.ultimosEventos.length) {
+        <ul class="list feed">
+          @for (e of m.ultimosEventos; track trackEvent(e)) {
+            <li>
+              <span class="chip ev-{{ eventKind(e.tipo) }}">
+                <mat-icon aria-hidden="true">{{ eventIcon(e.tipo) }}</mat-icon>
+                {{ eventLabel(e.tipo) }}
+              </span>
+              <span class="grow detail">{{ e.detalle }}</span>
+              <span class="kafka" title="Partición y offset en Kafka">
+                P{{ e.particion }} · offset {{ e.offset }}
+              </span>
+              <time class="muted num">{{ e.timestamp | date: 'HH:mm:ss' }}</time>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="muted">Sin eventos todavía.</p>
+      }
+    </section>
+  } @else if (status() === 'error') {
+    <div class="card empty-state">
+      <mat-icon>cloud_off</mat-icon>
+      <p>No se pudieron obtener las métricas. Revisa que el backend esté en línea.</p>
+    </div>
+  } @else {
+    <div class="card">
+      <app-loading-spinner label="Conectando con el flujo de eventos…" />
+    </div>
+  }
+</div>

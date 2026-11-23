@@ -5,6 +5,7 @@ export const environment: Environment = {
   apiUrl: 'https://vigilant-xylophone-g45r4wg64g9v397r9-8000.app.github.dev/api',
   mockFallback: false,
   devAuthBypass: false,
+  streamingMock: false,
   firebase: {
     apiKey: 'AIzaSyB1GdPjqZmXsbF3DgWbNkexjxknZMPwJyM',
     authDomain: 'charme-et-chic.firebaseapp.com',

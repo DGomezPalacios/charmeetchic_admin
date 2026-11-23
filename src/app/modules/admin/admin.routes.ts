@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { provideStreaming } from '../../shared/services/streaming.providers';
 
 /**
  * Rutas del panel, bajo `/admin`. El acceso lo protegen `authGuard` y `adminGuard` en la ruta padre.
@@ -39,6 +40,16 @@ export const ADMIN_ROUTES: Routes = [
     loadComponent: () =>
       import('./components/sales-reports/sales-reports.component').then(
         (m) => m.SalesReportsComponent,
+      ),
+  },
+  {
+    path: 'realtime',
+    title: 'Tiempo real',
+    // La instancia de StreamingService vive en el inyector de esta ruta (real o de ejemplo).
+    providers: [provideStreaming()],
+    loadComponent: () =>
+      import('./components/realtime-dashboard/realtime-dashboard.component').then(
+        (m) => m.RealtimeDashboardComponent,
       ),
   },
   {
